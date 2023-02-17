@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Mission06_ld365.Models;
-using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mission06_ld365.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
         private MovieContext _movieContext { get; set; }
 
         //constructor
-        public HomeController(ILogger<HomeController> logger, MovieContext movie)
+        public HomeController( MovieContext movie)
         {
-            _logger = logger;
+
             _movieContext = movie;
         }
 
@@ -29,32 +28,90 @@ namespace Mission06_ld365.Controllers
        [HttpGet]
         public IActionResult NewMovie()
         {
+            //creating dynamic variable to hold seeded data in a list
+            ViewBag.Categories = _movieContext.Categories.ToList();
+
             return View();
         }
 
         [HttpPost]
         public IActionResult NewMovie(MovieEntry movie)
         {
-            //adding mocies to the database that have been entered in the form
-            _movieContext.Add(movie);
-            _movieContext.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                //adding mocies to the database that have been entered in the form
+                _movieContext.Add(movie);
+                _movieContext.SaveChanges();
 
-            //reroute to a confirmation page after submitting the form
-            return View("Confirmation", movie);
+                //reroute to a confirmation page after submitting the form
+                return View("Confirmation", movie);
+            }
+
+            else //if invalid
+            {
+                ViewBag.Categories = _movieContext.Categories.ToList();
+
+                return View();
+            }
+
+            
         }
         public IActionResult Podcast()
         {
             return View();
         }
-        public IActionResult Privacy()
+        
+        [HttpGet]
+        public IActionResult MovieList()
         {
-            return View();
+
+            //filtering data
+            var movies = _movieContext.Movies
+                .Include(x => x.Category)
+                .OrderBy(x => x.Category.CategoryName)
+                .ToList();
+
+            return View(movies);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult Edit(int movieid)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            //populating field if the want to edit movie info
+            ViewBag.Categories = _movieContext.Categories.ToList();
+
+            var movie = _movieContext.Movies.Single(x => x.MovieId == movieid);
+
+            return View("NewMovie", movie);
+
+        }
+
+        [HttpPost]
+        public IActionResult Edit(MovieEntry movie)
+        {
+            _movieContext.Update(movie);
+            _movieContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int movieid)
+        {
+            var movie = _movieContext.Movies.Single(x => x.MovieId == movieid);
+
+            return View(movie);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(MovieEntry movie)
+        {
+
+            _movieContext.Movies.Remove(movie);
+            _movieContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+
         }
     }
 }

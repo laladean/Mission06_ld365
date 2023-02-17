@@ -15,15 +15,30 @@ namespace Mission06_ld365.Models
         }
 
         public DbSet<MovieEntry> Movies { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public object Responses { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
+
+            //seeding the category database/table
+            mb.Entity<Category>().HasData(
+                new Category { CategoryID = 1, CategoryName = "Action/Adventure"},
+                new Category { CategoryID = 2, CategoryName = "Comedy"},
+                new Category { CategoryID = 3, CategoryName = "Drama"},
+                new Category { CategoryID = 4, CategoryName = "Family"},
+                new Category { CategoryID = 5, CategoryName = "Horror/Suspense"},
+                new Category { CategoryID = 6, CategoryName = "Miscellaneous"},
+                new Category { CategoryID = 7, CategoryName = "Television"},
+                new Category { CategoryID = 8, CategoryName = "VHS"}
+                );
+
             //seeding the database
             mb.Entity<MovieEntry>().HasData(
                 new MovieEntry
                 {
                     MovieId = 1,
-                    Category = "Drama",
+                    CategoryID = 3,
                     Title = "Imitation Game",
                     Year = "2014",
                     Director = "Morten Tyldum",
@@ -37,7 +52,7 @@ namespace Mission06_ld365.Models
                 new MovieEntry
                 {
                     MovieId = 2,
-                    Category = "Comedy",
+                    CategoryID = 2,
                     Title = "Tangled",
                     Year = "2010",
                     Director = "Nathan Greno, Bryon Howard",
@@ -49,7 +64,7 @@ namespace Mission06_ld365.Models
                 new MovieEntry
                 {
                     MovieId = 3,
-                    Category = "Action/Adventure",
+                    CategoryID = 1,
                     Title = "Captain America: The Winter Soldier",
                     Year = "2014",
                     Director = "Anothony Russo, Joe Russo",

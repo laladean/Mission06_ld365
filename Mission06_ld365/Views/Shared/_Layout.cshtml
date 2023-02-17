@@ -7,16 +7,18 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<div>
+<div class="nav-link nav-tabs">
     <nav>
         <a asp-controller="Home" asp-action="Index">Home</a>
         <a asp-controller="Home" asp-action="NewMovie">Add Movie</a>
         <a asp-controller="Home" asp-action="Podcast">Podcast</a>
+        <a asp-controller="Home" asp-action="MovieList">Movie List</a>
 
     </nav>
-
-    @RenderBody()
-
-
 </div>
+
+    <div>
+        @RenderBody()
+    </div>
+
 </html>

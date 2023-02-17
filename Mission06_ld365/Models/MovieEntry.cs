@@ -14,8 +14,6 @@ namespace Mission06_ld365.Models
         [Required]
         public int MovieId { get; set; }
         [Required]
-        public string Category { get; set; }
-        [Required]
         public string Title { get; set; }
         [Required]
         public string Year { get; set; }
@@ -27,6 +25,11 @@ namespace Mission06_ld365.Models
         public string LentTo { get; set; }
         [MaxLength(25)]
         public string Notes { get; set; }
-    
+        
+        //build foreign key relationship
+        [Required]
+        public int CategoryID { get; set; }
+        public Category Category { get; set; }
+
     }
 }
